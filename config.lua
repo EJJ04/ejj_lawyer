@@ -1,5 +1,7 @@
 Config = {}
 
+Config.Job = 'lawyer'
+
 Config.Strings = {
     titlechangename = 'Change Name',
     advokatmenu = 'Lawyer Menu',

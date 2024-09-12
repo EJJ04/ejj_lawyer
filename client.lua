@@ -40,7 +40,7 @@ Citizen.CreateThread(function()
                 playerData = QBCore.Functions.GetPlayerData()
             end
 
-            if playerData and playerData.job and playerData.job.name == 'advokat' then
+            if playerData and playerData.job and playerData.job.name == Config.Job then
                 lib.showContext('advokat_context_menu')
             end
         end
