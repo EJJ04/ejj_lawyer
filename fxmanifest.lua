@@ -8,15 +8,15 @@ version '1.0.0'
 lua54 'yes'
 
 client_scripts {
-    'client.lua',
     'config.lua',
+    'client.lua',
 }
 
 server_scripts {
+    'config.lua',
     'server.lua',
     '@oxmysql/lib/MySQL.lua',
     '@mysql-async/lib/MySQL.lua',
-    'config.lua',
 }
 
 shared_scripts {

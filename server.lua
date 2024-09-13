@@ -15,50 +15,74 @@ end)
 
 RegisterServerEvent('updatePlayerInfo')
 AddEventHandler('updatePlayerInfo', function(playerId, firstName, lastName)
+    local src = source
+
     if framework == 'esx' then
         local xPlayer = ESX.GetPlayerFromId(playerId)
         if xPlayer then
-            local playerIdentifier = xPlayer.getIdentifier()
+            local PlayerMoney = xPlayer.getMoney()
 
-            MySQL.Async.execute('UPDATE users SET firstname = @firstName, lastname = @lastName WHERE identifier = @identifier',
-                {
+            if PlayerMoney >= Config.Cost then
+                local playerIdentifier = xPlayer.getIdentifier()
+
+                MySQL.Async.execute('UPDATE users SET firstname = @firstName, lastname = @lastName WHERE identifier = @identifier', {
                     ['@firstName'] = firstName,
                     ['@lastName'] = lastName,
                     ['@identifier'] = playerIdentifier
-                },
-                function(rowsChanged)
+                }, function(rowsChanged)
                     if rowsChanged > 0 then
-                        print('Updated player info successfully!')
+                        xPlayer.removeMoney(Config.Cost)
+                        TriggerClientEvent('ox_lib:notify', src, {
+                            description = Config.Strings.namechangesuccess,
+                            type = 'success'
+                        })
                     else
-                        print('Failed to update player info.')
+                        TriggerClientEvent('ox_lib:notify', src, {
+                            description = Config.Strings.namechangefail,
+                            type = 'error'
+                        })
                     end
-                end
-            )
-        else
-            print('Player not found')
+                end)
+            else
+                TriggerClientEvent('ox_lib:notify', src, {
+                    description = Config.Strings.notenoughmoney,
+                    type = 'error'
+                })
+            end
         end
 
     elseif framework == 'qbcore' then
         local player = QBCore.Functions.GetPlayer(playerId)
         if player then
-            local playerIdentifier = player.PlayerData.citizenid
+            local PlayerMoney = player.PlayerData.money['cash']
 
-            MySQL.Async.execute('UPDATE players SET firstname = @firstName, lastname = @lastName WHERE citizenid = @identifier',
-                {
+            if PlayerMoney >= Config.Cost then
+                local playerIdentifier = player.PlayerData.citizenid
+
+                MySQL.Async.execute('UPDATE players SET firstname = @firstName, lastname = @lastName WHERE citizenid = @identifier', {
                     ['@firstName'] = firstName,
                     ['@lastName'] = lastName,
                     ['@identifier'] = playerIdentifier
-                },
-                function(rowsChanged)
+                }, function(rowsChanged)
                     if rowsChanged > 0 then
-                        print('Updated player info successfully!')
+                        player.Functions.RemoveMoney('cash', Config.Cost)
+                        TriggerClientEvent('ox_lib:notify', src, {
+                            description = Config.Strings.namechangesuccess,
+                            type = 'success'
+                        })
                     else
-                        print('Failed to update player info.')
+                        TriggerClientEvent('ox_lib:notify', src, {
+                            description = Config.Strings.namechangefail,
+                            type = 'error'
+                        })
                     end
-                end
-            )
-        else
-            print('Player not found')
+                end)
+            else
+                TriggerClientEvent('ox_lib:notify', src, {
+                    description = Config.Strings.notenoughmoney,
+                    type = 'error'
+                })
+            end
         end
     end
 end)

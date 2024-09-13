@@ -1,5 +1,6 @@
 local framework = nil
 local ESX, QBCore = nil, nil
+local ped = nil
 
 AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() == resourceName then
@@ -13,19 +14,39 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
 end)
 
-local advokat_menu_options = {
-    {
-        title = Config.Strings.titlechangename,
-        onSelect = function()
-            openDialog(Config.Strings.dialogtitle, {Config.Strings.dialoginput1, Config.Strings.dialoginput2, Config.Strings.dialoginput3}, updatePlayerInfo)
-        end
-    },
-}
+function CreatePedEJJLawyer()
+    RequestModel(Config.Ped)
+    while not HasModelLoaded(Config.Ped) do
+        Wait(1)
+    end
 
-lib.registerContext({
-    id = 'advokat_context_menu',
-    title = Config.Strings.advokatmenu,
-    options = advokat_menu_options
+    ped = CreatePed(4, Config.Ped, Config.PedCoords.x, Config.PedCoords.y, Config.PedCoords.z - 1, Config.PedHeading, false, true)
+    
+    SetEntityAsMissionEntity(ped, true, true)
+
+    SetEntityInvincible(ped, true)
+
+    FreezeEntityPosition(ped, true)
+
+    SetBlockingOfNonTemporaryEvents(ped, true)
+end
+
+if Config.UsePed then
+    CreatePedEJJLawyer()
+end
+
+exports.ox_target:addGlobalPed({
+    icon = "fa-solid fa-comment",
+    label = "Talk with Billie", 
+    canInteract = function(entity, distance, coords, name, boneId)
+        return entity == ped
+    end,
+    onSelect = function()
+        local playerId = GetPlayerServerId(PlayerId()) 
+        openDialog2(Config.Strings.dialogtitle, {Config.Strings.dialoginput1, Config.Strings.dialoginput2, Config.Strings.dialoginput3}, playerId, function(input)
+            updatePlayerInfo(input)
+        end)
+    end
 })
 
 Citizen.CreateThread(function()
@@ -40,8 +61,8 @@ Citizen.CreateThread(function()
                 playerData = QBCore.Functions.GetPlayerData()
             end
 
-            if playerData and playerData.job and playerData.job.name == Config.Job then
-                lib.showContext('advokat_context_menu')
+            if playerData and playerData.job and playerData.job.name == Config.Job and not Config.UsePed then
+                openDialog(Config.Strings.dialogtitle, {Config.Strings.dialoginput1, Config.Strings.dialoginput2, Config.Strings.dialoginput3}, updatePlayerInfo)
             end
         end
     end
@@ -50,6 +71,19 @@ end)
 function openDialog(title, inputs, callback)
     local input = lib.inputDialog(title, {
         {type = 'input', label = inputs[1], description = Config.Strings.dialogenter .. Config.Strings.dialoginput1, required = true},
+        {type = 'input', label = inputs[2], description = Config.Strings.dialogenter .. Config.Strings.dialoginput2, required = true},
+        {type = 'input', label = inputs[3], description = Config.Strings.dialogenter .. Config.Strings.dialoginput3, required = true},
+        {type = 'date', label = Config.Strings.dialoginput4, icon = {'far', 'calendar'}, default = true, format = "DD/MM/YYYY"}
+    })
+
+    if input then
+        callback(input)
+    end
+end
+
+function openDialog2(title, inputs, playerId, callback)
+    local input = lib.inputDialog(title, {
+        {type = 'input', label = inputs[1], description = Config.Strings.dialogenter .. Config.Strings.dialoginput1, required = true, default = tostring(playerId), disabled = true}, 
         {type = 'input', label = inputs[2], description = Config.Strings.dialogenter .. Config.Strings.dialoginput2, required = true},
         {type = 'input', label = inputs[3], description = Config.Strings.dialogenter .. Config.Strings.dialoginput3, required = true},
         {type = 'date', label = Config.Strings.dialoginput4, icon = {'far', 'calendar'}, default = true, format = "DD/MM/YYYY"}
@@ -73,4 +107,21 @@ function updatePlayerInfo(input)
             type = 'error'
         })
     end
+end
+
+local CreateBlips = function()
+	for _, blip in pairs(Config.LawyerBlip) do
+		local lawyerblip = AddBlipForCoord(blip.coords.x, blip.coords.y, blip.coords.z)
+		SetBlipSprite(lawyerblip, blip.sprite)
+		SetBlipColour(lawyerblip, blip.color)
+		SetBlipScale(lawyerblip, blip.scale)
+		SetBlipAsShortRange(lawyerblip, true)
+		BeginTextCommandSetBlipName("STRING")
+		AddTextComponentString(blip.title)
+		EndTextCommandSetBlipName(lawyerblip)
+	end
+end
+
+if Config.EnableBlip then
+    CreateBlips()
 end
