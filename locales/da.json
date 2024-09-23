@@ -1,0 +1,12 @@
+{
+    "police_tag": "Politi",
+    "dialogtitle": "Indtast Oplysninger",
+    "dialoginput1": "Spiller ID",
+    "dialoginput2": "Fornavn",
+    "dialoginput3": "Efternavn",
+    "dialogenter": "Indtast venligst din ",
+    "errormsg": "Fejl",
+    "namechangesuccess": "Navneændring succesfuld!",
+    "namechangefail": "Navneændring fejlede.",
+    "notenoughmoney": "Du har ikke nok penge."
+}

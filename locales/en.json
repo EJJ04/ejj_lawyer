@@ -1,0 +1,12 @@
+{
+    "police_tag": "Police",
+    "dialogtitle": "Enter Information",
+    "dialoginput1": "Player ID",
+    "dialoginput2": "First Name",
+    "dialoginput3": "Last Name",
+    "dialogenter": "Please enter your ",
+    "errormsg": "Error",
+    "namechangesuccess": "Name change successful!",
+    "namechangefail": "Name change failed.",
+    "notenoughmoney": "You do not have enough money."
+}
