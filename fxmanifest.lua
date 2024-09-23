@@ -7,6 +7,10 @@ author 'EJJ_04'
 version '1.0.0'
 lua54 'yes'
 
+files {
+    'locales/*.json'
+}
+
 client_scripts {
     'config.lua',
     'client.lua',

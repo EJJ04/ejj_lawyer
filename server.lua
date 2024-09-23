@@ -1,3 +1,5 @@
+lib.locale()
+
 local framework = nil
 local ESX, QBCore = nil, nil
 
@@ -33,19 +35,19 @@ AddEventHandler('updatePlayerInfo', function(playerId, firstName, lastName)
                     if rowsChanged > 0 then
                         xPlayer.removeMoney(Config.Cost)
                         TriggerClientEvent('ox_lib:notify', src, {
-                            description = Config.Strings.namechangesuccess,
+                            description = locale('namechangesuccess'),
                             type = 'success'
                         })
                     else
                         TriggerClientEvent('ox_lib:notify', src, {
-                            description = Config.Strings.namechangefail,
+                            description = locale('namechangefail'),
                             type = 'error'
                         })
                     end
                 end)
             else
                 TriggerClientEvent('ox_lib:notify', src, {
-                    description = Config.Strings.notenoughmoney,
+                    description = locale('notenoughmoney'),
                     type = 'error'
                 })
             end
@@ -67,19 +69,19 @@ AddEventHandler('updatePlayerInfo', function(playerId, firstName, lastName)
                     if rowsChanged > 0 then
                         player.Functions.RemoveMoney('cash', Config.Cost)
                         TriggerClientEvent('ox_lib:notify', src, {
-                            description = Config.Strings.namechangesuccess,
+                            description = locale('namechangesuccess'),
                             type = 'success'
                         })
                     else
                         TriggerClientEvent('ox_lib:notify', src, {
-                            description = Config.Strings.namechangefail,
+                            description = locale('namechangefail'),
                             type = 'error'
                         })
                     end
                 end)
             else
                 TriggerClientEvent('ox_lib:notify', src, {
-                    description = Config.Strings.notenoughmoney,
+                    description = locale('notenoughmoney'),
                     type = 'error'
                 })
             end

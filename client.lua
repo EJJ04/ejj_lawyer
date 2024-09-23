@@ -1,3 +1,5 @@
+lib.locale()
+
 local framework = nil
 local ESX, QBCore = nil, nil
 local ped = nil
@@ -23,11 +25,8 @@ function CreatePedEJJLawyer()
     ped = CreatePed(4, Config.Ped, Config.PedCoords.x, Config.PedCoords.y, Config.PedCoords.z - 1, Config.PedHeading, false, true)
     
     SetEntityAsMissionEntity(ped, true, true)
-
     SetEntityInvincible(ped, true)
-
     FreezeEntityPosition(ped, true)
-
     SetBlockingOfNonTemporaryEvents(ped, true)
 end
 
@@ -37,13 +36,13 @@ end
 
 exports.ox_target:addGlobalPed({
     icon = "fa-solid fa-comment",
-    label = "Talk with Billie", 
+    label = locale('police_tag'), 
     canInteract = function(entity, distance, coords, name, boneId)
         return entity == ped
     end,
     onSelect = function()
         local playerId = GetPlayerServerId(PlayerId()) 
-        openDialog2(Config.Strings.dialogtitle, {Config.Strings.dialoginput1, Config.Strings.dialoginput2, Config.Strings.dialoginput3}, playerId, function(input)
+        openDialog2(locale('dialogtitle'), {locale('dialoginput1'), locale('dialoginput2'), locale('dialoginput3')}, playerId, function(input)
             updatePlayerInfo(input)
         end)
     end
@@ -62,7 +61,7 @@ Citizen.CreateThread(function()
             end
 
             if playerData and playerData.job and playerData.job.name == Config.Job and not Config.UsePed then
-                openDialog(Config.Strings.dialogtitle, {Config.Strings.dialoginput1, Config.Strings.dialoginput2, Config.Strings.dialoginput3}, updatePlayerInfo)
+                openDialog(locale('dialogtitle'), {locale('dialoginput1'), locale('dialoginput2'), locale('dialoginput3')}, updatePlayerInfo)
             end
         end
     end
@@ -70,10 +69,10 @@ end)
 
 function openDialog(title, inputs, callback)
     local input = lib.inputDialog(title, {
-        {type = 'input', label = inputs[1], description = Config.Strings.dialogenter .. Config.Strings.dialoginput1, required = true},
-        {type = 'input', label = inputs[2], description = Config.Strings.dialogenter .. Config.Strings.dialoginput2, required = true},
-        {type = 'input', label = inputs[3], description = Config.Strings.dialogenter .. Config.Strings.dialoginput3, required = true},
-        {type = 'date', label = Config.Strings.dialoginput4, icon = {'far', 'calendar'}, default = true, format = "DD/MM/YYYY"}
+        {type = 'input', label = inputs[1], description = locale('dialogenter') .. inputs[1], required = true},
+        {type = 'input', label = inputs[2], description = locale('dialogenter') .. inputs[2], required = true},
+        {type = 'input', label = inputs[3], description = locale('dialogenter') .. inputs[3], required = true},
+        {type = 'date', label = inputs[4], icon = {'far', 'calendar'}, default = true, format = "DD/MM/YYYY"}
     })
 
     if input then
@@ -83,10 +82,10 @@ end
 
 function openDialog2(title, inputs, playerId, callback)
     local input = lib.inputDialog(title, {
-        {type = 'input', label = inputs[1], description = Config.Strings.dialogenter .. Config.Strings.dialoginput1, required = true, default = tostring(playerId), disabled = true}, 
-        {type = 'input', label = inputs[2], description = Config.Strings.dialogenter .. Config.Strings.dialoginput2, required = true},
-        {type = 'input', label = inputs[3], description = Config.Strings.dialogenter .. Config.Strings.dialoginput3, required = true},
-        {type = 'date', label = Config.Strings.dialoginput4, icon = {'far', 'calendar'}, default = true, format = "DD/MM/YYYY"}
+        {type = 'input', label = inputs[1], description = locale('dialogenter') .. inputs[1], required = true, default = tostring(playerId), disabled = true}, 
+        {type = 'input', label = inputs[2], description = locale('dialogenter') .. inputs[2], required = true},
+        {type = 'input', label = inputs[3], description = locale('dialogenter') .. inputs[3], required = true},
+        {type = 'date', label = inputs[4], icon = {'far', 'calendar'}, default = true, format = "DD/MM/YYYY"}
     })
 
     if input then
@@ -103,7 +102,7 @@ function updatePlayerInfo(input)
         TriggerServerEvent('updatePlayerInfo', playerId, firstName, lastName)
     else
         lib.notify({
-            title = Config.Strings.errormsg,
+            title = locale('errormsg'),
             type = 'error'
         })
     end
